@@ -15,6 +15,12 @@ abstract class Parser[T] {
     def parseAll(seq: Seq[T]): Boolean = (seq forall parse) & end() // note &, not &&
 }
 
+object Parser {
+    implicit class StringParser(str: String) {
+        def charParser(): Parser[Char] = new BasicParser(Set.from(str.toCharArray))
+    }
+}
+
 class BasicParser(chars: Set[Char]) extends Parser[Char] {
     override def parse(t: Char): Boolean = chars.contains(t)
 
