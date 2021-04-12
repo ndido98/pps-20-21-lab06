@@ -17,8 +17,6 @@ trait Functions {
 
 object FunctionsImpl extends Functions {
 
-    import Combiner._
-
     override def sum(a: List[Double]): Double = combine(a)
 
     override def concat(a: Seq[String]): String = combine(a)
