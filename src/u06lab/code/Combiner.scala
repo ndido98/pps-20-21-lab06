@@ -24,7 +24,7 @@ object FunctionsImpl extends Functions {
     override def max(a: List[Int]): Int = combine(a)
 
     override def combine[A](a: Seq[A])(implicit combiner: Combiner[A]): A =
-        a.foldLeft(combiner.unit)((acc, elem) => combiner.combine(acc, elem))
+        a.foldLeft(combiner.unit)(combiner.combine)
 }
 
 
