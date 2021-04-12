@@ -17,7 +17,7 @@ abstract class Parser[T] {
 
 object Parser {
     implicit class StringParser(str: String) {
-        def charParser(): Parser[Char] = new BasicParser(Set.from(str.toCharArray))
+        def charParser(): Parser[Char] = new BasicParser(str.toSet)
     }
 }
 
