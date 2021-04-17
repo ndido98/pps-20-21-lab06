@@ -58,6 +58,21 @@ class TicTacToeTests {
     }
 
     @Test
+    def testComputeAnyGameStopsWhenWin(): Unit = {
+        val fiveMovesGames = computeAnyGame(X, 7).toList
+        val winningGame = List(
+            emptyBoard,
+            List(Mark(0, 0, X)),
+            List(Mark(0, 0, X), Mark(0, 1, O)),
+            List(Mark(0, 0, X), Mark(0, 1, O), Mark(1, 0, X)),
+            List(Mark(0, 0, X), Mark(0, 1, O), Mark(1, 0, X), Mark(1, 1, O)),
+            List(Mark(0, 0, X), Mark(0, 1, O), Mark(1, 0, X), Mark(1, 1, O), Mark(2, 0, X))
+        )
+        assertEquals(Some(X), getWinner(winningGame.last))
+        assertTrue(fiveMovesGames contains winningGame)
+    }
+
+    @Test
     def testIsPlayerWinner(): Unit = {
         assertTrue(isPlayerWinner(winningHorizontal, X))
         assertTrue(isPlayerWinner(winningVertical, O))

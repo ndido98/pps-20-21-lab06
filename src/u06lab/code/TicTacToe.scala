@@ -44,7 +44,7 @@ object TicTacToe {
         case n => for {
             game <- computeAnyGame(player.other, n - 1) // take all the games generated from the previous move
             nextMark <- placeAnyMark(game.last, player) // for each game append a new mark
-        } yield game :+ nextMark
+        } yield if (getWinner(game.last).isEmpty) game :+ nextMark else game
     }
 
     def getWinner(board: Board): Option[Player] = Seq(X, O).find(isPlayerWinner(board, _))
