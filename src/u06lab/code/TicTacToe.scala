@@ -22,15 +22,45 @@ object TicTacToe {
 
     type Board = List[Mark]
     type Game = List[Board]
+    val boardSize = 3
+    val emptyBoard: Board = List.empty
+    val emptyGame: Game = List(emptyBoard)
 
     def find(board: Board, x: Int, y: Int): Option[Player] =
         board collectFirst {
             case Mark(mx, my, p) if x == mx && y == my => p
         }
 
-    def placeAnyMark(board: Board, player: Player): Seq[Board] = ???
+    def placeAnyMark(board: Board, player: Player): Seq[Board] =
+        for {
+            x <- 0 until boardSize
+            y <- 0 until boardSize
+            if !board.exists(mark => mark.x == x && mark.y == y)
+        } yield board :+ Mark(x, y, player)
 
-    def computeAnyGame(player: Player, moves: Int): Stream[Game] = ???
+
+    def computeAnyGame(player: Player, moves: Int): LazyList[Game] = moves match {
+        case 0 => LazyList(emptyGame) // empty board
+        case n => for {
+            game <- computeAnyGame(player.other, n - 1) // take all the games generated from the previous move
+            nextMark <- placeAnyMark(game.last, player) // for each game append a new mark
+        } yield game :+ nextMark
+    }
+
+    def getWinner(board: Board): Option[Player] = Seq(X, O).find(isPlayerWinner(board, _))
+
+    def isPlayerWinner(board: Board, player: Player): Boolean = {
+        def _horizontal(y: Int): Set[Mark] = (0 until boardSize).map(x => Mark(x, y, player)).toSet
+        def _vertical(x: Int): Set[Mark] = (0 until boardSize).map(y => Mark(x, y, player)).toSet
+        val _diagonal = (0 until boardSize).map(i => Mark(i, i, player)).toSet
+        val _antiDiagonal = (0 until boardSize).map(i => Mark(boardSize - 1 - i, i, player)).toSet
+
+        val horizontals = (0 until boardSize).map(y => _horizontal(y)).toSet
+        val verticals = (0 until boardSize).map(x => _vertical(x)).toSet
+        val allWinningStates = horizontals ++ verticals + _diagonal + _antiDiagonal
+
+        allWinningStates.exists(state => state.subsetOf(board.toSet))
+    }
 
     def printBoards(game: Seq[Board]): Unit =
         for (y <- 0 to 2; board <- game.reverse; x <- 0 to 2) {
